@@ -1,0 +1,475 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* --- Aparte styles start --- */
+html {
+  font-family: Calibri, Arial, Helvetica, sans-serif;
+  font-size: 11pt;
+  background-color: white;
+}
+
+/* Comment indicators */
+a.comment-indicator {
+  background: red;
+  display: inline-block;
+  border: 1px solid black;
+  width: 0.5em;
+  height: 0.5em;
+}
+
+a.comment-indicator:hover + div.comment {
+  background: #ffd;
+  position: absolute;
+  display: block;
+  border: 1px solid black;
+  padding: 0.5em;
+}
+
+div.comment {
+  display: none;
+}
+
+/* Table styles */
+table {
+  table-layout: fixed; /* Ensure consistent cell sizes */
+  width: max-content; /* Allow table to extend horizontally */
+  border-collapse: collapse;
+  page-break-after: always;
+}
+
+.gridlines td,
+.gridlines th {
+  border: 1px dotted black;
+}
+
+/* Text alignment classes */
+.b,
+.e {
+  text-align: center;
+}
+.f {
+  text-align: right;
+}
+.inlineStr,
+.s {
+  text-align: left;
+}
+.n {
+  text-align: right;
+}
+
+/* Base style for all cells */
+td,
+th {
+  vertical-align: middle;
+  border: 1px solid #000000 !important;
+  font-family: 'Calibri';
+  font-size: 11pt;
+  padding-left: 0px;
+  text-align: left;
+}
+
+/* Style variations using data attributes or classes */
+[class*='style'] {
+  vertical-align: middle;
+  text-align: left;
+  padding-left: 0px;
+}
+
+.style0 {
+  vertical-align: bottom;
+  border: none !important;
+  color: #000000;
+  font-family: 'Arial';
+  font-size: 10pt;
+  background-color: white;
+}
+
+.style1,
+.style5 {
+  text-align: center;
+  font-weight: bold;
+  color: #ffffff;
+  font-family: 'Arial';
+  background-color: #7030a0;
+}
+.style1 {
+  font-size: 24pt;
+}
+.style5 {
+  font-size: 28pt;
+}
+
+.style2 {
+  font-weight: bold;
+  color: #000000;
+  font-size: 9pt;
+  background-color: #e0a0ea;
+}
+
+.style3 {
+  text-align: center;
+  color: #ffffff;
+  font-family: 'Arial';
+  font-size: 18pt;
+  background-color: #000000;
+}
+
+.style4 {
+  vertical-align: bottom;
+  font-weight: bold;
+  color: #000000;
+  background-color: #f3d9f7;
+}
+
+.style6,
+.style7,
+.style15 {
+  text-align: center;
+  color: #ffffff;
+  background-color: #000000;
+}
+.style6 {
+  border-right: none !important;
+}
+.style7 {
+  border-left: none !important;
+}
+.style15 {
+  border-right: none !important;
+}
+
+.style8 {
+  text-align: center;
+  color: #757171;
+  background-color: #e7e6e6;
+}
+
+.style9,
+.style10 {
+  text-align: center;
+  color: #ffffff;
+  font-family: 'Arial';
+  font-size: 10pt;
+  background-color: #7030a0;
+}
+
+.style11,
+.style44 {
+  text-align: center;
+  color: #000000;
+  font-family: 'Arial';
+  font-size: 10pt;
+  background-color: #ffffff;
+}
+
+.style45 {
+  text-decoration: underline;
+}
+
+.style12,
+.style13,
+.style14,
+.style33,
+.style34,
+.style35 {
+  color: #ffffff;
+  background-color: #000000;
+  font-family: 'Arial';
+  font-size: 10pt;
+}
+.style12,
+.style33 {
+  font-weight: bold;
+  text-align: center;
+}
+.style14,
+.style35 {
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.style16,
+.style38 {
+  text-align: center;
+  font-weight: bold;
+  color: #000000;
+  font-size: 14pt;
+  background-color: #f3d9f7;
+}
+
+.style17 {
+  color: #ffffff;
+  background-color: #203764;
+}
+
+.style18,
+.style39 {
+  text-align: center;
+  text-decoration: underline;
+  color: #0563c1;
+  background-color: #f3d9f7;
+}
+.style39 {
+  border-top: none !important;
+}
+
+.style19 {
+  background-color: #92d050;
+}
+.style20 {
+  background-color: #c6e0b4;
+}
+.style21,
+.style41 {
+  background-color: #fce4d6;
+}
+.style22 {
+  background-color: #c9c9c9;
+}
+.style23 {
+  background-color: #f4b084;
+}
+.style24 {
+  background-color: #e0a0ea;
+}
+.style25 {
+  background-color: #8ea9db;
+}
+.style26 {
+  background-color: #00b0f0;
+}
+.style27 {
+  background-color: #fafac3;
+}
+.style28 {
+  color: #ffffff;
+  background-color: #4472c4;
+}
+.style29 {
+  background-color: #92d050;
+}
+.style30 {
+  background-color: #ffff00;
+}
+.style31 {
+  color: #ffffff;
+  background-color: #7030a0;
+}
+.style32 {
+  background-color: #bdd7ee;
+}
+.style36,
+.style37 {
+  text-align: center;
+  color: #ffffff;
+  background-color: #000000;
+}
+.style36 {
+  border-left: none !important;
+  border-right: none !important;
+}
+.style37 {
+  border-left: none !important;
+}
+
+.style40 {
+  background-color: #e2efda;
+}
+.style42 {
+  background-color: #f3d9f7;
+}
+.style43 {
+  background-color: #00b050;
+}
+
+/* Add styles for dynamically generated months */
+.month-section {
+  margin-bottom: 20px;
+}
+
+.month-header .pink-bar {
+  height: 10px;
+  background-color: pink;
+}
+
+.month-header .light-pink-bar {
+  height: 10px;
+  background-color: lightpink;
+}
+
+.month-header .black-bar {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding: 10px;
+}
+
+.day {
+  text-align: center;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+}
+
+/* Column widths */
+table.sheet0 col {
+  width: 24.39999972pt;
+}
+table.sheet0 col.col0 {
+  width: 54.2222216pt;
+}
+table.sheet0 col.col1 {
+  width: 37.27777735pt;
+}
+table.sheet0 col.col2 {
+  width: 94.8888878pt;
+}
+table.sheet0 col.col3 {
+  width: 285.34444117pt;
+}
+table.sheet0 col.col4 {
+  width: 37.95555512pt;
+}
+
+/* Row heights */
+table.sheet0 tr {
+  height: 12.8pt;
+}
+table.sheet0 tr.row0 {
+  height: 30.6pt;
+}
+table.sheet0 tr.row1 {
+  height: 24.05pt;
+}
+table.sheet0 tr.row2 {
+  height: 15.8pt;
+}
+table.sheet0 tr.row3,
+table.sheet0 tr.row4,
+table.sheet0 tr.row5 {
+  height: 14.15pt;
+}
+table.sheet0 tr.row6 {
+  height: 36pt;
+}
+table.sheet0 tr.row7,
+table.sheet0 tr.row8,
+table.sheet0 tr.row9,
+table.sheet0 tr.row10,
+table.sheet0 tr.row11,
+table.sheet0 tr.row12,
+table.sheet0 tr.row13,
+table.sheet0 tr.row14,
+table.sheet0 tr.row15,
+table.sheet0 tr.row16,
+table.sheet0 tr.row17,
+table.sheet0 tr.row18,
+table.sheet0 tr.row19,
+table.sheet0 tr.row20,
+table.sheet0 tr.row21,
+table.sheet0 tr.row22,
+table.sheet0 tr.row23,
+table.sheet0 tr.row24,
+table.sheet0 tr.row25,
+table.sheet0 tr.row26,
+table.sheet0 tr.row27,
+table.sheet0 tr.row28,
+table.sheet0 tr.row29,
+table.sheet0 tr.row30,
+table.sheet0 tr.row31,
+table.sheet0 tr.row32,
+table.sheet0 tr.row33,
+table.sheet0 tr.row34,
+table.sheet0 tr.row35,
+table.sheet0 tr.row36,
+table.sheet0 tr.row37 {
+  height: 20.15pt;
+}
+
+.calendar-scroll-x {
+  width: 100vw;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  /* Opcional: para que la tabla no quede pegada al borde */
+  padding-bottom: 16px;
+}
+/* --- Aparte styles end --- */
