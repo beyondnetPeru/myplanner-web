@@ -1,0 +1,8 @@
+CREATE TABLE calendar_plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  keyword VARCHAR(100) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  plan_json JSON NOT NULL,
+  last_updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY unique_keyword (keyword)
+);

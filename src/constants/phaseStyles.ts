@@ -15,6 +15,7 @@ export const monthNames = [
 ];
 
 export const phaseStyles = [
+  { class: 'style17', text: 'Sprint - Planning' },
   { class: 'style19', text: 'Development - Coding' },
   { class: 'style20', text: 'Development - Sprint Testing' },
   { class: 'style21', text: 'Development - Code Integration' },
@@ -32,6 +33,7 @@ export const phaseStyles = [
 ];
 
 export const newAppPhaseStyles = [
+  { class: 'style19', text: 'Development . JM' },
   { class: 'style40', text: 'Development - Integration Testing' },
   { class: 'style41', text: 'Code Integration' },
   { class: 'style23', text: 'QA - Performance (Dev, SRE)' },

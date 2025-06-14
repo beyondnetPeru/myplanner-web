@@ -23,6 +23,9 @@ export default defineConfig({
   },
   server: {
     open: true,
+    proxy: {
+      '/api': 'http://localhost:3001',
+    },
   },
   // To change the build target
   // build: {

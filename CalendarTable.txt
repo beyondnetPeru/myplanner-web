@@ -1,9 +1,4 @@
-// Perfecto, debajo de Release Note, quiero que haya una columna que rellene todo
-// exceptuando la fila negra, el color rellenado debe ser #f3d9f7, pero antes de eso...
-// Debes mover la columna de abajo de Release Note a la derecha, creando una nueva debajo
-// de release note con todo lo que te dije antes, de relleno ese color.
-
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import useCalendarDays from '../hooks/useCalendarDays';
 import { phaseStyles, newAppPhaseStyles, daysInMonth, monthNames } from '../constants/phaseStyles';
 
@@ -67,14 +62,7 @@ const PaintableDayCell: React.FC<PaintableDayCellProps> = ({
   const paintedColor = paintMap[paintKey];
   const isFree = freeDays.has(col);
 
-  // Depuración: muestra el color que debería tener cada celda
-  if (paintedColor) {
-    // Solo loguea las celdas que deberían estar pintadas
-    // eslint-disable-next-line no-console
-    console.log(`Celda ${paintKey} color: ${paintedColor}`);
-  }
-
-  let style: React.CSSProperties = {};
+  let style: React.CSSProperties | undefined;
   if (isFree) {
     style = {
       background: '#e0e0e0',
@@ -88,11 +76,8 @@ const PaintableDayCell: React.FC<PaintableDayCellProps> = ({
       background: paintedColor,
       cursor: paintMode ? 'pointer' : undefined,
     };
-  } else {
-    style = {
-      background: '#fff', // fuerza blanco si no hay color
-      cursor: paintMode ? 'pointer' : undefined,
-    };
+  } else if (paintMode) {
+    style = { cursor: 'pointer' };
   }
 
   return (
@@ -172,87 +157,109 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
   );
 };
 
-// Editable cell component
-const EditableCell: React.FC<{
+// --- EditableCell ---
+type EditableCellProps = {
   row: number;
   col: number;
+  value: string;
   className?: string;
-  cellTexts: { [key: string]: string };
-  setCellTexts: (t: { [key: string]: string }) => void;
-  editTextsMode: boolean;
-  children?: React.ReactNode;
-  style?: React.CSSProperties;
+  setCellTexts: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
   colSpan?: number;
   rowSpan?: number;
-}> = ({
+  style?: React.CSSProperties;
+  editTextsMode: boolean;
+};
+
+const EditableCell: React.FC<EditableCellProps> = ({
   row,
   col,
+  value,
   className,
-  cellTexts,
   setCellTexts,
-  editTextsMode,
-  children,
-  style,
   colSpan,
   rowSpan,
+  style,
+  editTextsMode,
+  ...rest
 }) => {
-  const key = `${row}|${col}`;
-  const [editing, setEditing] = React.useState(false);
-  const [value, setValue] = React.useState(
-    cellTexts[key] ?? (typeof children === 'string' ? children : ''),
-  );
+  const [editing, setEditing] = useState(false);
+  const [tempValue, setTempValue] = useState(value);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    setValue(cellTexts[key] ?? (typeof children === 'string' ? children : ''));
-    // eslint-disable-next-line
-  }, [cellTexts[key]]);
+  useEffect(() => {
+    if (editing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [editing]);
 
-  const commitValue = (val: string) => {
-    setEditing(false);
-    setCellTexts((prev) => {
-      if (val.trim() === '') {
-        const { [key]: _, ...rest } = prev;
-        return rest;
-      }
-      return { ...prev, [key]: val };
-    });
+  useEffect(() => {
+    setTempValue(value);
+  }, [value]);
+
+  const handleDoubleClick = () => {
+    if (editTextsMode) setEditing(true);
   };
 
-  if (!editTextsMode) {
-    return (
-      <td className={className} style={style} colSpan={colSpan} rowSpan={rowSpan}>
-        {cellTexts[key] ?? children}
-      </td>
-    );
-  }
+  const handleBlur = () => {
+    setEditing(false);
+    setCellTexts((prev) => ({
+      ...prev,
+      [`${row}|${col}`]: tempValue,
+    }));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      setEditing(false);
+      setCellTexts((prev) => ({
+        ...prev,
+        [`${row}|${col}`]: tempValue,
+      }));
+    } else if (e.key === 'Escape') {
+      setEditing(false);
+      setTempValue(value);
+    }
+  };
 
   return (
     <td
       className={className}
-      style={style}
       colSpan={colSpan}
       rowSpan={rowSpan}
-      onClick={() => setEditing(true)}
+      style={style}
+      onDoubleClick={handleDoubleClick}
+      {...rest}
     >
       {editing ? (
         <input
-          type="text"
-          autoFocus
-          value={value}
-          style={{ width: '100%', fontSize: 'inherit', fontFamily: 'inherit' }}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={() => commitValue(value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === 'Tab') {
-              commitValue(value);
-            }
+          ref={inputRef}
+          value={tempValue}
+          onChange={(e) => setTempValue(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          style={{
+            width: '100%',
+            fontSize: 'inherit',
+            fontFamily: 'inherit',
+            border: '1px solid #7030a0',
+            borderRadius: 4,
+            padding: '2px 4px',
+            boxSizing: 'border-box',
           }}
         />
       ) : (
-        cellTexts[key] ?? children
+        value
       )}
     </td>
   );
+};
+
+EditableCell.defaultProps = {
+  className: 'style11 null',
+  colSpan: undefined,
+  rowSpan: undefined,
+  style: undefined,
 };
 
 const CalendarTable: React.FC<CalendarTableProps> = ({
@@ -275,6 +282,10 @@ const CalendarTable: React.FC<CalendarTableProps> = ({
   const monthColStart = (m: number) =>
     colStart + daysInMonth.slice(0, m).reduce((a, b) => a + b, 0);
 
+  // Helper para obtener el texto editable o el default
+  const getCellText = (row: number, col: number, defaultValue: string) =>
+    cellTexts[`${row}|${col}`] !== undefined ? cellTexts[`${row}|${col}`] : defaultValue;
+
   return (
     <table id="sheet0" className="sheet0 gridlines">
       <col className="col0" />
@@ -289,14 +300,12 @@ const CalendarTable: React.FC<CalendarTableProps> = ({
           <EditableCell
             row={0}
             col={0}
+            value={getCellText(0, 0, 'SOMOSBELCORP ECOSYSTEM')}
             className="column0 style1 s"
-            cellTexts={cellTexts}
+            colSpan={5}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-            colSpan={5}
-          >
-            SOMOSBELCORP ECOSYSTEM
-          </EditableCell>
+          />
           {monthNames.map((month, m) => (
             <td
               key={`r0-m${month}`}
@@ -310,14 +319,12 @@ const CalendarTable: React.FC<CalendarTableProps> = ({
           <EditableCell
             row={1}
             col={0}
+            value={getCellText(1, 0, 'IMPORTANT Commercial dates')}
             className="column0 style3 s"
-            cellTexts={cellTexts}
+            colSpan={5}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-            colSpan={5}
-          >
-            IMPORTANT Commercial dates
-          </EditableCell>
+          />
           {monthNames.map((month, m) => (
             <td
               key={`r1-m${month}`}
@@ -331,15 +338,13 @@ const CalendarTable: React.FC<CalendarTableProps> = ({
           <EditableCell
             row={2}
             col={0}
+            value={getCellText(2, 0, 'Release Plan')}
             className="column0 style5 s"
-            cellTexts={cellTexts}
-            setCellTexts={setCellTexts}
-            editTextsMode={editTextsMode}
             colSpan={5}
             rowSpan={2}
-          >
-            Release Plan
-          </EditableCell>
+            setCellTexts={setCellTexts}
+            editTextsMode={editTextsMode}
+          />
           {monthNames.map((month, m) => (
             <td
               key={`r2-m${month}`}
@@ -350,7 +355,7 @@ const CalendarTable: React.FC<CalendarTableProps> = ({
         </tr>
         {/* Fila 3 */}
         <tr className="row3">
-          {/* Nombres de los meses NO editables */}
+          {/* Nombres de los meses */}
           {(() => {
             let colIdx = 0;
             return monthNames.map((month, m) => {
@@ -380,35 +385,30 @@ const CalendarTable: React.FC<CalendarTableProps> = ({
           <EditableCell
             row={6}
             col={0}
+            value={getCellText(6, 0, 'Scope')}
             className="column0 style9 s"
-            cellTexts={cellTexts}
+            colSpan={3}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-            colSpan={3}
-          >
-            Scope
-          </EditableCell>
+          />
           <EditableCell
             row={6}
             col={3}
+            value={getCellText(6, 3, 'Phase')}
             className="column3 style9 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-          >
-            Phase
-          </EditableCell>
+          />
           <EditableCell
             row={6}
             col={4}
+            value={getCellText(6, 4, 'Release \nNote')}
             className="column4 style10 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
+            style={{ whiteSpace: 'pre-line' }}
             editTextsMode={editTextsMode}
-          >
-            Release <br />
-            Note
-          </EditableCell>
+          />
+          {/* Solo renderiza los días válidos */}
           {days.map(({ day, col }) => (
             <CalendarDayCell
               key={`daycell-${col}`}
@@ -425,121 +425,109 @@ const CalendarTable: React.FC<CalendarTableProps> = ({
           <EditableCell
             row={7}
             col={0}
+            value={getCellText(7, 0, 'VERSION:')}
             className="column0 style12 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-          >
-            VERSION:
-          </EditableCell>
+          />
           <EditableCell
             row={7}
             col={1}
+            value={getCellText(7, 1, '2.18.7')}
             className="column1 style13 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-          >
-            2.18.7
-          </EditableCell>
+          />
           <EditableCell
             row={7}
             col={2}
+            value={getCellText(7, 2, 'COMPONENTS:')}
             className="column2 style12 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-          >
-            COMPONENTS:
-          </EditableCell>
+          />
           <EditableCell
             row={7}
             col={3}
+            value={getCellText(7, 3, 'WEB + BACKEND')}
             className="column3 style13 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-          >
-            WEB + BACKEND
-          </EditableCell>
+          />
           <EditableCell
             row={7}
             col={4}
+            value={getCellText(7, 4, 'INFO')}
             className="column4 style14 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
+            style={{ color: '#000' }}
             editTextsMode={editTextsMode}
-            style={{ color: '#fff' }}
-          >
-            INFO
-          </EditableCell>
+          />
           <EmptyCells from={colStart} to={colEnd} className="style15 null" />
         </tr>
-        {/* Filas 8-22: phaseStyles */}
-        {phaseStyles.map((phase, idx) => (
-          <tr key={`phase-${8 + idx}`} className={`row${8 + idx}`}>
-            {idx === 0 && (
-              <EditableCell
-                row={8}
-                col={0}
-                className="column0 style16 s"
-                cellTexts={cellTexts}
-                setCellTexts={setCellTexts}
-                editTextsMode={editTextsMode}
-                colSpan={3}
-                rowSpan={phaseStyles.length}
-              >
-                <span
-                  style={{
-                    fontWeight: 'bold',
-                    color: '#000',
-                    fontFamily: 'Calibri',
-                    fontSize: '14pt',
-                  }}
-                >
-                  SBR Release Web
-                  <br />
-                </span>
-                <span
-                  style={{
-                    color: '#000',
-                    fontFamily: 'Calibri',
-                    fontSize: '14pt',
-                  }}
-                >
-                  <br />
-                  BackEnd New App 1.1.0 (3 tickets)
-                  <br />
-                  PR - USA New Home Update - FF = OFF
-                  <br />
-                </span>
-                <span
-                  style={{
-                    fontWeight: 'bold',
-                    color: '#000',
-                    fontFamily: 'Calibri',
-                    fontSize: '14pt',
-                  }}
-                >
-                  Features:
-                  <br />
-                </span>
-              </EditableCell>
+        {/* Fila 8 */}
+        <tr className="row8">
+          <EditableCell
+            row={8}
+            col={0}
+            value={getCellText(
+              8,
+              0,
+              `SBR Release Web\n\nBackEnd New App 1.1.0 (3 tickets)\nPR - USA New Home Update - FF = OFF\n\nFeatures:`
             )}
+            className="column0 style16 s"
+            colSpan={3}
+            rowSpan={15}
+            setCellTexts={setCellTexts}
+            style={{
+              whiteSpace: 'pre-line',
+              fontWeight: 'bold',
+              color: '#000',
+              fontFamily: 'Calibri',
+              fontSize: '14pt',
+            }}
+            editTextsMode={editTextsMode}
+          />
+          <EditableCell
+            row={8}
+            col={3}
+            value={getCellText(8, 3, 'Sprint - Planning')}
+            className="column3 style17 s"
+            setCellTexts={setCellTexts}
+            editTextsMode={editTextsMode}
+          />
+          <td className="column4 style4" rowSpan={15} />
+          {/* Solo renderiza los días válidos */}
+          {days.map(({ col }) => (
+            <PaintableDayCell
+              key={`r8-c${col}`}
+              row={8}
+              col={col}
+              className="style11 null"
+              paintMap={paintMap}
+              paintMode={paintMode}
+              freeDayMode={freeDayMode}
+              freeDays={freeDays}
+              onPaintCell={onPaintCell}
+            />
+          ))}
+        </tr>
+        {/* Filas 9-22: phaseStyles */}
+        {phaseStyles.map((phase, idx) => (
+          <tr key={`phase-${9 + idx}`} className={`row${9 + idx}`}>
             <EditableCell
-              row={8 + idx}
+              row={9 + idx}
               col={3}
+              value={getCellText(9 + idx, 3, phase.text)}
               className={`column3 ${phase.class} s`}
-              cellTexts={cellTexts}
               setCellTexts={setCellTexts}
               editTextsMode={editTextsMode}
-            >
-              {phase.text}
-            </EditableCell>
+            />
+            {/* columna4 (rosa) se mantiene */}
             {days.map(({ col }) => (
               <PaintableDayCell
-                key={`phase-${8 + idx}-col${col}`}
-                row={8 + idx}
+                key={`phase-${9 + idx}-col${col}`}
+                row={9 + idx}
                 col={col}
                 className="style11 null"
                 paintMap={paintMap}
@@ -556,124 +544,107 @@ const CalendarTable: React.FC<CalendarTableProps> = ({
           <EditableCell
             row={23}
             col={0}
+            value={getCellText(23, 0, 'VERSION:')}
             className="column0 style33 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-          >
-            VERSION:
-          </EditableCell>
+          />
           <EditableCell
             row={23}
             col={1}
+            value={getCellText(23, 1, '1.1.0')}
             className="column1 style34 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-          >
-            1.1.0
-          </EditableCell>
+          />
           <EditableCell
             row={23}
             col={2}
+            value={getCellText(23, 2, 'COMPONENTS:')}
             className="column2 style33 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-          >
-            COMPONENTS:
-          </EditableCell>
+          />
           <EditableCell
             row={23}
             col={3}
+            value={getCellText(23, 3, 'NEW APP')}
             className="column3 style34 s"
-            cellTexts={cellTexts}
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-          >
-            NEW APP
-          </EditableCell>
+          />
           <EditableCell
             row={23}
             col={4}
+            value={getCellText(23, 4, 'INFO')}
             className="column4 style35 s"
-            cellTexts={cellTexts}
+            setCellTexts={setCellTexts}
+            style={{ color: '#000' }}
+            editTextsMode={editTextsMode}
+          />
+          <EmptyCells from={colStart} to={colEnd} className="style36 null" />
+        </tr>
+        {/* Fila 24 */}
+        <tr className="row24">
+          <EditableCell
+            row={24}
+            col={0}
+            value={getCellText(
+              24,
+              0,
+              `Release Beta: 07/04/2025\nRelease Date: 14/04/2025\n\nFeatures:\nPR - USA New Home Update\nNew App 1.1.0 (3 tickets) Fixes\nPR - USA New Home Update - FF = ON`
+            )}
+            className="column0 style38 s"
+            colSpan={3}
+            rowSpan={14}
+            setCellTexts={setCellTexts}
+            style={{ whiteSpace: 'pre-line', fontFamily: 'Calibri', fontSize: '14pt' }}
+            editTextsMode={editTextsMode}
+          />
+          <EditableCell
+            row={24}
+            col={3}
+            value={getCellText(24, 3, 'Development . JM')}
+            className="column3 style19 s"
             setCellTexts={setCellTexts}
             editTextsMode={editTextsMode}
-            style={{ color: '#fff' }}
-          >
-            INFO
-          </EditableCell>
-          <EmptyCells from={colStart} to={colEnd} className="style36 null" />
+          />
+          <td className="column4 style42 null" rowSpan={14} />
+          {/* Solo renderiza los días válidos */}
+          {days.map(({ col }) => (
+            <PaintableDayCell
+              key={`r24-c${col}`}
+              row={24}
+              col={col}
+              className="style11 null"
+              paintMap={paintMap}
+              paintMode={paintMode}
+              freeDayMode={freeDayMode}
+              freeDays={freeDays}
+              onPaintCell={onPaintCell}
+            />
+          ))}
         </tr>
         {/* Filas NewAppPhaseRows */}
         {newAppPhaseStyles.map((phase, idx) => (
-          <tr key={`newapp-${24 + idx}`} className={`row${24 + idx}`}>
-            {idx === 0 && (
-              <EditableCell
-                row={24}
-                col={0}
-                className="column0 style38 s"
-                cellTexts={cellTexts}
-                setCellTexts={setCellTexts}
-                editTextsMode={editTextsMode}
-                colSpan={3}
-                rowSpan={newAppPhaseStyles.length}
-              >
-                <span
-                  style={{
-                    fontFamily: 'Calibri',
-                    fontSize: '14pt',
-                  }}
-                >
-                  Release Beta: 07/04/2025
-                  <br />
-                  Release Date: 14/04/2025
-                  <br />
-                  <br />
-                </span>
-                <span
-                  style={{
-                    fontWeight: 'bold',
-                    color: '#000',
-                    fontFamily: 'Calibri',
-                    fontSize: '14pt',
-                  }}
-                >
-                  Features:
-                  <br />
-                </span>
-                <span
-                  style={{
-                    color: '#000',
-                    fontFamily: 'Calibri',
-                    fontSize: '14pt',
-                  }}
-                >
-                  PR - USA New Home Update <br />
-                  New App 1.1.0 (3 tickets) Fixes
-                  <br />
-                  PR - USA New Home Update - FF = ON
-                </span>
-              </EditableCell>
-            )}
+          <tr key={`newapp-${25 + idx}`} className={`row${25 + idx}`}>
             <EditableCell
-              row={24 + idx}
+              row={25 + idx}
               col={3}
+              value={getCellText(25 + idx, 3, phase.text)}
               className={`column3 ${phase.class} s`}
-              cellTexts={cellTexts}
               setCellTexts={setCellTexts}
               editTextsMode={editTextsMode}
-            >
-              {phase.text}
-            </EditableCell>
+            />
+            {/* columna4 eliminada */}
             {days.map(({ col }) => {
               const isLastRow = idx === newAppPhaseStyles.length - 1;
+              // Cambia la lógica para que la celda especial tenga ambas clases
               const styleClass = isLastRow && col === 8 ? 'style44 style45' : 'style44';
               return (
                 <PaintableDayCell
-                  key={`newapp-${24 + idx}-col${col}`}
-                  row={24 + idx}
+                  key={`newapp-${25 + idx}-col${col}`}
+                  row={25 + idx}
                   col={col}
                   className={`${styleClass} null`}
                   paintMap={paintMap}
