@@ -1,308 +1,163 @@
-# Vite React Starter
+# MyPlanner Web
 
-## Table of Contents
+## Descripción
 
-- [Getting Started](#getting-started)
-- [VS Code Plugins](#vs-code-plugins)
-- [File Structure](#file-structure)
-- [Guidelines & Conventions](#conventions)
+MyPlanner Web es una aplicación de planificación de calendario con frontend en React + Vite y backend en Node.js + Express + MySQL. Permite crear, editar, guardar y cargar planes de calendario personalizados, con soporte para exportar a Excel y gestión de usuarios mediante contraseña.
 
-&nbsp;
-<a name="getting-started"></a>
+---
 
-## 🚀 Getting Started
+## Tabla de Contenidos
 
-&nbsp;
+- [Requisitos](#requisitos)
+- [Instalación](#instalacion)
+- [Ejecución](#ejecucion)
+- [Linting y Formateo](#linting)
+- [Estructura de Carpetas](#estructura)
+- [Stack Tecnológico](#stack)
+- [Comandos Útiles](#comandos)
 
-### Prerequisites
+---
 
-- NodeJS 16
+<a name="requisitos"></a>
+
+## 🚦 Requisitos
+
+- Node.js 16 o superior
 - NPM
+- MySQL (para el backend)
 
-&nbsp;
+---
 
-### First Run
+<a name="instalacion"></a>
 
-### `1. npm install`
+## 📦 Instalación
 
-Install all the dependencies.
+### 1. Clona el repositorio y entra a la carpeta principal
 
-&nbsp;
-
-
-### `2. npm run build:<environment>`
-
-Build the app using the env file for the environment. eg: `npm run build:local`.\
-Available environments: 'local', 'dev', 'staging'.\
-Use `npm run build` only for prod.
-
-&nbsp;
-
-### `3. npm run start:<environment>`
-
-Start the app using the env file for the environment. eg: `npm run start:dev`.\
-Available environments: 'local', 'dev', 'staging'.\
-Use `npm run start` only for prod.
-
-&nbsp;
-
-### `4. npm run test`
-
-Will run the tests
-
-> `On every commit` the linting process will be executed. \
-> `On every push` tests will be executed.
-
-&nbsp;
-
-## Stack
-
-### Main
-
-- ViteJS
-- ReactJS
-- Typescript
-  - react-error-boundary
-
-#### Styling
-
-- Tailwind CSS v3.
-
-> Could be styled-components, emotions, etc
-
-#### UI Components
-
-Could be any of the following:
-
-- Ant Design.
-- Material UI.
-- Bulma.
-
-#### Date manipulation
-
-- Date-fns
-
-#### Testing
-
-- Jest + React Testing Library (plus some plugins).
-
-#### HTTP Client
-
-- React Query
-- Axios
-
-#### Git Hooks
-
-- Husky & Lint staged
-- Runs prettier and eslint on @pre-commit & jest/tests on @pre-push
-
-#### Routing
-
-- React Router 6.
-
-#### Lint & Formatting
-
-- ESlint & Prettier Configured
-- Lints
-  - airbnb
-  - react
-  - react hooks
-  - typescript
-  - jsx-a11y
-  - jest
-  - testing library
-
-### Editor Config
-
-- vscode settings & extension recommendations
-- `.editorconfig` file
-
-&nbsp;
-<a name="vs-code-plugins"></a>
-
-## 👨🏼‍💻 VS Code Plugins
-
-&nbsp;
-
-### Must
-
-- ES7 React/Redux
-- ESLint
-- Prettier
-- EditorConfig for VS Code
-- DotENV
-- Tailwind CSS IntelliSense
-
-&nbsp;
-
-### Optionals
-
-- Auto Close Tag
-- Auto Rename Tag
-- Auto import - ES6
-- Path Intellisense
-- TODO Highlight
-
-&nbsp;
-<a name="file-structure"></a>
-
-## File Structure
-
-Folder structure is based on productivity and some best practices (NextJS, public recommendations, etc):
-
-```text
-src
-├── App.css                       * Main styles to load or overwrite for any UI components library .
-├── App.tsx                       * Main app component.
-├── index.css                     * Main app styles and import tailwind base styles.
-├── main.tsx                      * Entry point of the application (any initial configuration or plugins).
-├── assets                        * Assets that are imported into your components(images, custom svg, etc).
-│   └── ...
-├── components                    * Components of the projects that are not the main views.
-│   ├── ui                        * Generic and reusable across the whole app. Presentational components eg. Buttons, Inputs, Checkboxes.
-│   ├── layout                    * Unique and one time use components that will help with app structure (guards, navigation, etc).
-│   ├── shared                    * Reusable components across different domains or features.
-│   ├── <domain component>        * Belong to a specific domain. Reusable in different Pages.
-│   └── ...
-├── plugins                       * Init and config plugins(axios, react-query, react-feature-flags, etc).
-│   └── ...
-├── services                      * All the common services. e.g. Api, hubs, store (redux/context API/ Mobx), etc.
-│   ├── api                       * Abstractions for making API requests
-│   │    └── base                 * Abstract classes for all the API's.
-│   │    └── authentication.ts    * Authentication API for login, reset password, etc.
-│   │    └── ...
-│   └── context                   * All the Contexts use din the app for Auth, alerts, etc
-│        └── ...
-├── theme                         * Global/Common styles configuration (variables, main theme, mixins, etc) on Sass/Less.
-├── test                          * Utilities, mocks and config files for tests.
-├── hooks                         * Custom hooks to isolate reusable logic.
-├── models                        * Constructors that will mold incoming and outgoing server data into repeatable and scalable objects.
-├── constants                     * Anything referenced globally and no Dynamic information.
-├── utils                         * Functions and utilities (for env variables, for tests, for regex value testing, filters, etc.)
-├── routes                        * All the possible routes/navigation of the app.
-├── pages                         * Presentational components that represents pages/views.
-│   ├── private                   * Private views (authenticated user)
-│   │    └── ...
-│   ├── public                    * Public views (guest user)
-│   │    └── ...
-│   └── ...                       * Shared views
-└── .vscode                       * VS Code workspace settings to work with ESLint rules and formatting
-                                    (you can also lint or fix on save 😉).
+```bash
+cd myplanner-web
 ```
 
-**Some important root/config files**
+### 2. Instala dependencias del frontend
 
-```text
-.
-├── src
-│   └── jest.setup.ts       * Jest extra configuration.
-├── .editorconfig           * Coding styles (also by programming language).
-├── .env                    * Environment variables (env.production, env.dev, env.development, env.staging, etc).
-├── .eslintrc.json          * ESLint configuration and rules.
-├── .prettierrc             * Formatting Prettier options.
-├── tsconfig.js             * Typescript configuration.
-├── postcss.config.js       * POST CSS configuration.
-├── tailwind.config.js      * Tailwind CSS configuration.
-├── vite.config.ts          * ViteJS configuration.
-└── jest.config.js          * Jest configuration for tests.
+```bash
+npm install
 ```
 
-&nbsp;
-<a name="conventions"></a>
+### 3. Instala dependencias del backend
 
-## 📚 Guidelines & Conventions
+```bash
+cd backend
+npm install
+```
 
-Here are a few important conventions:
+---
 
-### JSX vs JS
+<a name="ejecucion"></a>
 
-Since JSX is not standard JS it should go into it's own extension ie. `.ts` for TypeScript, `.jsx` for JSX.
-Now days, most of the IDE's support both extensions for ReactJs, so more important reason today is that helps to indicate what it is: a component or plain js?.
+## 🚀 Ejecución
 
-### Naming
+### 1. Configura las variables de entorno
 
-- **Component names** should always be **multi-word**, except for root `App` components. Use `UserCard` or `ProfileCard` instead of `Card` for example.
-  Each component should be in its own file.
+Crea un archivo `.env` en `backend/` con los datos de tu base de datos MySQL:
 
-  ```text
-  Gives more meaning and context of what the component does.
-  ```
+```
+DB_HOST=localhost
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_NAME=myplanner
+PORT=3001
+```
 
-- **Components files** should be always **PascalCase**/**kebab-case** except for HOC's. Use `UserCard.jsx` or `user-card.jsx`.
+### 2. Inicia el backend
 
-  ```text
-  PascalCase works best with autocompletion in code editors, as it’s consistent with how we reference
-  components in JS(X) and templates, wherever possible.
+```bash
+cd backend
+node server.js
+```
 
-  However, mixed case filenames can sometimes create issues on case-insensitive file systems, which
-  is why kebab-case is also perfectly acceptable.
-  ```
+El backend estará disponible en `http://localhost:3001`.
 
-- **Components are named accordingly to it's relative path to components or src**. Given that, a component located at `src/components/User/List.jsx` would be named as `UserList`. A component located at `src/screens/User/List` would be named as `ScreensUserList`.
-- **Components that are in a folder with same name, don’t repeat the name in the component**. Considering that, a component located at `src/components/User/List/List.jsx` would be named as `UserList` and **NOT** as `UserListList`.
+### 3. Inicia el frontend
 
-  ```text
-  The name we give to the components, should be clear and unique in the application, in order to
-  make them being easier to find and to avoid possible confusions.
+En otra terminal, desde la raíz del proyecto:
 
-  Easy search inside the project.
-  ```
+```bash
+npm run dev
+```
 
-- Components that are only **used once per page should begin with the prefix “The”**, to denote that there can be only one. For example for a navbar or a footer you should use `TheNavbar.jsx` or `TheFooter.jsx`.
+El sitio web estará disponible en `http://localhost:5173` (o el puerto que indique Vite).
 
-  ```text
-  This does not mean the component is only used in a single page,
-  but it will only be used once per page.
+---
 
-  These components never accept any props, since they are specific to your app, not their context
-  within your app.
+<a name="linting"></a>
 
-  If you find the need to add props, it’s a good indication that this is actually a reusable
-  component that is only used once per page for now.
-  ```
+## 🧹 Linting y Formateo
 
-- **High Order Components** (HOC) file and folder name in **lowerCamelCase** and use the prefix `with`.
+Para corregir automáticamente los problemas de linting y formateo:
 
-  ```text
-  Generic convention
-  ```
+```bash
+npx eslint . --fix
+npm run lint
+```
 
-- **Always use full name** instead of abbreviation in the name of your components. For example don’t use `UDSettings`, use instead `UserDashboardSettings`.
+---
 
-  ```text
-  Keep things clear
-  ```
+<a name="estructura"></a>
 
-- **Each page is a react class component** having some state. A **page component** uses other components to assemble the page like lego blocks.
+## 📁 Estructura de Carpetas
 
-  ```text
-  Single entry point by feature or page.
+```
+myplanner-web/
+├── backend/           # Backend Node.js/Express
+│   ├── server.js
+│   ├── package.json
+│   └── ...
+├── src/               # Frontend React
+│   ├── components/
+│   ├── pages/
+│   ├── services/
+│   ├── hooks/
+│   ├── models/
+│   ├── utils/
+│   └── ...
+├── public/
+├── package.json       # Frontend
+├── vite.config.ts
+└── ...
+```
 
-  Keep the pages in a separated folder in the root of src, because they will be
-  grouped accordingly to the route definition and not by modules.
-  ```
+---
 
-- **Keep components shallow**. If a components has a lot of nested markup then the chances of reusing it decreases. Instead we should take advantage of composition. It saves us from prop drilling or having to reach out to context api.
+<a name="stack"></a>
 
-  ```text
-  Reusable and Readable code.
+## 🛠️ Stack Tecnológico
 
-  Passing down props to multiple child components is what they call a code smell.
-  ```
+- **Frontend:** React, Vite, TypeScript, Tailwind CSS, Axios, React Query
+- **Backend:** Node.js, Express, MySQL, bcrypt
+- **Testing:** Jest, React Testing Library
+- **Linting:** ESLint, Prettier, Husky, Lint-staged
 
-- **Presentational components** are those who **don’t have internal state**. Their role is to show certain pieces of UI or Layout. They are provided data via props or context api or state management.
-- **Container components** are those which **deals with business logic**. They usually have some state and only render presentational components based on the logic.
+---
 
-  ```text
-  This way Presentational and Container components complete the puzzle together.
+<a name="comandos"></a>
 
-  By dividing the responsibilities, code becomes easier to maintain and debug.
-  ```
+## 📝 Comandos Útiles
 
-### Organization / Best practices
+- `npm run dev` — Inicia el frontend en modo desarrollo
+- `npm run build` — Compila el frontend para producción
+- `npm run lint` — Ejecuta el linter en el frontend
+- `npm run test` — Ejecuta los tests
+- `node server.js` — Inicia el backend
 
-- Use a **central export file** (Barrel export -> `index.ts`) in the components directory. With this file we can just import all of our components into it and export them. This will allow us to import components into any file from the same place.
-- **Group components** by `module/feature` inside `components folder`.
-- Keep **generic components** by context inside `src/components/ui` or `src/components/layout`.
-- **Keep pages simple**, with minimum structure and code.
-- Group pages accordingly to route definition. For a route `/user/list` we would have a page located at `/src/pages/User/List.jsx`.
+---
+
+## Notas
+
+- El backend expone las rutas `/api/calendar-plan/save` y `/api/calendar-plan/load` para guardar y cargar planes.
+- El frontend se comunica automáticamente con el backend usando proxy en desarrollo.
+- Puedes exportar tu plan a Excel desde la interfaz web.
+
+---
+
+¡Listo! Ahora puedes usar y modificar MyPlanner Web según tus necesidades.
