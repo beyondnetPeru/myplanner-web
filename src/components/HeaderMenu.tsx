@@ -53,7 +53,7 @@ const getButtonHoverStyle = (disabled = false) =>
     : {};
 
 const paletteColors = [
-  '#ffb300', // amarillo
+  '#ffb300', // naranja
   '#e57373', // rojo
   '#64b5f6', // azul
   '#81c784', // verde

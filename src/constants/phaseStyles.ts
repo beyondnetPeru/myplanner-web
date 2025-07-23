@@ -31,20 +31,3 @@ export const phaseStyles = [
   { class: 'style31', text: 'Sprint - Review' },
   { class: 'style32', text: 'Sprint - Retrospective' },
 ];
-
-export const newAppPhaseStyles = [
-  { class: 'style19', text: 'Development . JM' },
-  { class: 'style40', text: 'Development - Integration Testing' },
-  { class: 'style41', text: 'Code Integration' },
-  { class: 'style23', text: 'QA - Performance (Dev, SRE)' },
-  { class: 'style24', text: 'QA - Golden Data' },
-  { class: 'style42', text: 'QA - Analytics Regression' },
-  { class: 'style25', text: 'QA - Regression' },
-  { class: 'style26', text: 'UAT' },
-  { class: 'style27', text: 'Release - Go/No Go' },
-  { class: 'style28', text: 'Release - Rollout Plan' },
-  { class: 'style43', text: 'Release - Beta Testing' },
-  { class: 'style30', text: 'Release - Go Live' },
-  { class: 'style31', text: 'Sprint - Review' },
-  { class: 'style32', text: 'Sprint - Retrospective' },
-];
